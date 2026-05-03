@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Погода</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+}
+
+.card {
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    width: 300px;
+}
+
+.weather-main {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 24px;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2 id="city">Курган</h2>
+
+    <div class="weather-main">
+        <div id="temp">--°C</div>
+        <div id="wind">-- м/с</div>
+    </div>
+
+    <p id="desc"></p>
+    <p id="status">Загрузка...</p>
+
+    <button onclick="getWeather()">Обновить</button>
+</div>
+
+<script>
+const apiKey = "45d9b12cbb2766f0860510642821f21b";
+
+async function getWeather() {
+    const status = document.getElementById("status");
+
+    try {
+        const res = await fetch(
+            https://api.openweathermap.org/data/2.5/weather?q=Kurgan&appid=${apiKey}&units=metric&lang=ru
+        );
+
+        const data = await res.json();
+
+        if (data.cod !== 200) {
+            status.innerText = "Ошибка: " + data.message;
+            return;
+        }
+
+        document.getElementById("city").innerText = data.name;
+        document.getElementById("temp").innerText = Math.round(data.main.temp) + "°C";
+        document.getElementById("wind").innerText = data.wind.speed + " м/с";
+        document.getElementById("desc").innerText = data.weather[0].description;
+
+        status.innerText = "Обновлено";
+
+    } catch (e) {
+        status.innerText = "Ошибка сети";
+    }
+}
+
+getWeather();
+</script>
+
+</body>
+</html>
